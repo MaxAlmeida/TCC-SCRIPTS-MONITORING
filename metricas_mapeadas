@@ -1,0 +1,20 @@
+Average CPU utilization
+  No trabalho de kooh ele divide o cputime usado pela vm pelo tempo que a vm foi criada.
+Pode se pegar o tempo de utilização usando o seguinte comando virsh dominfo one-688 | grep CPU 
+
+Cache hits e cache mits
+No munin não há plugins que peguem cache hits e cache miss. Uma alternativa seria utilizar uma outra metrica que representasse o uso de memória
+
+Virtual machies switheces per second
+--
+
+I/O blocks per second (blocks)
+Virtio0-req no munin . Neste caso pegando pelo comando munin-run obtem o valor até aquele momento . Duas soluções: usar o próprio fetch do rdd
+ou então no script calcular quantas requisições foram feitas naquele período.
+
+
+Disk reads and writes issued per second
+A partir do plugin diskstats >> equivale a variável rdio.value ( leitura) e wrio.value (escrita)
+
+Disk reading and writing time per VM
+A partir do plugin diskstats >> equivale as variáveis avgrdwait.value ( tempo gasto com leitura ) e avgwrwait.value ( escrita) 
