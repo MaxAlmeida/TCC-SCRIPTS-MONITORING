@@ -1,6 +1,7 @@
 Average CPU utilization
   No trabalho de kooh ele divide o cputime usado pela vm pelo tempo que a vm foi criada.
 Pode se pegar o tempo de utilização usando o seguinte comando virsh dominfo one-688 | grep CPU 
+O quep pode ser feito é calcular com o comando do virsh utilização de cpu durante a execução de um determinado teste e dividir esse valor pelo gasto para execução deste teste. Com isso seria obtido a media de utilização de cpu da mesma maneira que o kooh fez.
 
 Cache hits e cache mits
 No munin não há plugins que peguem cache hits e cache miss. Uma alternativa seria utilizar uma outra metrica que representasse o uso de memória
