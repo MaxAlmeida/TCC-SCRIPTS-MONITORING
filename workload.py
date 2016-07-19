@@ -4,7 +4,7 @@ import os
 import time
 
 def average_time_elapsed(command, times, directory):
-  report_file = 'report_file'
+  report_file = '/mnt/report_file'
   os.chdir(directory)
  
   if os.path.isfile(report_file):
@@ -21,7 +21,7 @@ def average_time_elapsed(command, times, directory):
   for line in score_file:
     if "real" in line:
       value = re.findall(r'[-+]?([0-9]*\.[0-9]+|[0-9]+)',line)
-      sum_average += float(value[1])
+      sum_average += float(value[0])*60+float(value[1])
   return float(sum_average/float(times))
 
 
@@ -48,14 +48,20 @@ def run_add_double(times):
   print float(sum_average)/float(times) 
  
 def run_bzip2(times):
-  command = "(time sh -c 'bzip2 -c --best file.txt > file.txt.bz') 2>> report_file"
+  command = "(time sh -c 'bzip2 -c --best file.txt > file.txt.bz') 2>> /mnt/report_file"
   directory = '/root/huge-file'
   time_score = average_time_elapsed(command,times,directory)
   print time_score 
   
 
 def run_grep(times):
-  command = "(time sh -c  \"grep -aoE '[123]+' random | tr -d '\n'\") 2>> report_file" 
+  command = "(time sh -c  \"grep -aoE '[123]+' random | tr -d '\n'\") 2>> /mnt/report_file" 
   directory = '/root/huge-file'
   time_score = average_time_elapsed(command,times,directory)
 
+def run_povray(times):
+  command = "(time sh -c \"povray benchmark.pov\") 2>> /mnt/report_file"
+  directory = '/root/povray/povray-3.6/scenes/advanced'
+  time_score = average_time_elapsed(command,times,directory)
+  print time_score
+run_bzip2(2)
