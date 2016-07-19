@@ -52,9 +52,10 @@ def run_bzip2(times):
   directory = '/root/huge-file'
   time_score = average_time_elapsed(command,times,directory)
   print time_score 
- 
-run_bzip2(4) 
-
-#def run_grep(times):
   
+
+def run_grep(times):
+  command = "(time sh -c  \"grep -aoE '[123]+' random | tr -d '\n'\") 2>> report_file" 
+  directory = '/root/huge-file'
+  time_score = average_time_elapsed(command,times,directory)
 
