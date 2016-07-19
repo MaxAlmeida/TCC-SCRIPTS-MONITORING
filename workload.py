@@ -58,10 +58,19 @@ def run_grep(times):
   command = "(time sh -c  \"grep -aoE '[123]+' random | tr -d '\n'\") 2>> /mnt/report_file" 
   directory = '/root/huge-file'
   time_score = average_time_elapsed(command,times,directory)
+  print time_score
 
 def run_povray(times):
   command = "(time sh -c \"povray benchmark.pov\") 2>> /mnt/report_file"
   directory = '/root/povray/povray-3.6/scenes/advanced'
   time_score = average_time_elapsed(command,times,directory)
   print time_score
-run_bzip2(2)
+
+def run_cp(times):
+  command = "(time sh -c \"cp file_cp.txt file_cp_copy.txt\") 2>> /mnt/report_file"
+  directory = '/root/huge-file'
+  time_score = average_time_elapsed(command, times, directory)
+  print time_score
+
+
+run_cp(3)
