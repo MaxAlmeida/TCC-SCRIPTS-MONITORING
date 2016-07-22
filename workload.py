@@ -72,5 +72,10 @@ def run_cp(times):
   time_score = average_time_elapsed(command, times, directory)
   print time_score
 
+def run_crypt(times):
+  command = "(time sh -c \"./encrpyt.sh\";\"./decrypt.sh\") 2>> /mnt/report_file"
+  directory = '/mnt/TCC-SCRIPTS-MONITORING'
+  time_score = average_time_elapsed(command, times, directory)
+  print time_score
 
-run_cp(3)
+run_crypt(3)
