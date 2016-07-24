@@ -2,7 +2,14 @@ import subprocess
 import re
 import os
 import time
+import datetime
 
+def write_report_file(average, file_name): 
+  directory = '/mnt/reports/'
+  report = open(directory+file_name, 'a')
+  report.write(average)
+  report.close()
+ 
 def average_time_elapsed(command, times, directory):
   report_file = '/mnt/report_file'
   os.chdir(directory)
@@ -48,34 +55,56 @@ def run_add_double(times):
   print float(sum_average)/float(times) 
  
 def run_bzip2(times):
+  print '>>>>Run bzip2 test...'
   command = "(time sh -c 'bzip2 -c --best file.txt > file.txt.bz') 2>> /mnt/report_file"
   directory = '/root/huge-file'
   time_score = average_time_elapsed(command,times,directory)
-  print time_score 
+  return time_score 
   
 
 def run_grep(times):
+  print '>>> Run Grep test ...'
   command = "(time sh -c  \"grep -aoE '[123]+' random | tr -d '\n'\") 2>> /mnt/report_file" 
   directory = '/root/huge-file'
   time_score = average_time_elapsed(command,times,directory)
-  print time_score
+  return time_score
 
 def run_povray(times):
+  print '>>> Run povray test ...'
   command = "(time sh -c \"povray benchmark.pov\") 2>> /mnt/report_file"
   directory = '/root/povray/povray-3.6/scenes/advanced'
   time_score = average_time_elapsed(command,times,directory)
-  print time_score
+  return time_score
 
 def run_cp(times):
-  command = "(time sh -c \"cp file_cp.txt file_cp_copy.txt\") 2>> /mnt/report_file"
+  print '>>> Run cp test ...'
+  command = "(time sh -c \"cp file.txt file_cp_copy.txt\") 2>> /mnt/report_file"
   directory = '/root/huge-file'
   time_score = average_time_elapsed(command, times, directory)
-  print time_score
+  return time_score
 
 def run_crypt(times):
+  print '>>> Run crypt test ...'
   command = "(time sh -c \"./encrpyt.sh\";\"./decrypt.sh\") 2>> /mnt/report_file"
   directory = '/mnt/TCC-SCRIPTS-MONITORING'
   time_score = average_time_elapsed(command, times, directory)
-  print time_score
+  return time_score
 
-run_crypt(3)
+#get actual time
+st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
+
+file_name = 'inactive_score_'+str(st)
+crypt_score = 'Ccrypt: ' + str(run_crypt(2)) + '\n'
+write_report_file(crypt_score,file_name)
+
+cp_score = 'Cp: '+str(run_cp(2)) + '\n'
+write_report_file(cp_score,file_name)
+
+grep_score = 'Grep: '+str(run_grep(2)) + '\n'
+write_report_file(grep_score,file_name)
+
+bzip2_score = 'Bzip: '+str(run_bzip2(2)) + '\n'
+write_report_file(bzip2_score, file_name)
+
+povray_score = 'Povray: '+str(run_povray(1)) + '\n'
+write_report_file(povray_score, file_name)
