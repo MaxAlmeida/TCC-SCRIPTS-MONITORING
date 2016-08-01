@@ -90,21 +90,47 @@ def run_crypt(times):
   time_score = average_time_elapsed(command, times, directory)
   return time_score
 
+def run_bw_mem(times):
+  report_file = '/mnt/report_file'
+  command = 'bw_mem 790M rdwr 2>> /mnt/report_file'
+ 
+  if os.path.isfile(report_file):
+    os.remove(report_file)
+
+  cont = 1
+  while cont <= times:
+    os.system(command)
+    cont+=1
+
+  sum_average = 0
+  score_file = open(report_file, 'r')
+  for line in score_file:
+    value = re.findall(r'[-+]?([0-9]*\.[0-9]+|[0-9]+)',line)
+    print value
+    sum_average += float(value[1])
+  return float(sum_average/float(times))
+    
+
 #get actual time
 st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 
-file_name = 'inactive_score_'+str(st)
-crypt_score = 'Ccrypt: ' + str(run_crypt(2)) + '\n'
-write_report_file(crypt_score,file_name)
+#file_name = 'inactive_score_'+str(st)
+#crypt_score = 'Ccrypt: ' + str(run_crypt(2)) + '\n'
+#write_report_file(crypt_score,file_name)
 
-cp_score = 'Cp: '+str(run_cp(2)) + '\n'
-write_report_file(cp_score,file_name)
+#cp_score = 'Cp: '+str(run_cp(2)) + '\n'
+#write_report_file(cp_score,file_name)
 
-grep_score = 'Grep: '+str(run_grep(2)) + '\n'
-write_report_file(grep_score,file_name)
+#grep_score = 'Grep: '+str(run_grep(2)) + '\n'
+#write_report_file(grep_score,file_name)
 
-bzip2_score = 'Bzip: '+str(run_bzip2(2)) + '\n'
-write_report_file(bzip2_score, file_name)
+#bzip2_score = 'Bzip: '+str(run_bzip2(2)) + '\n'
+#write_report_file(bzip2_score, file_name)
 
-povray_score = 'Povray: '+str(run_povray(1)) + '\n'
-write_report_file(povray_score, file_name)
+#povray_score = 'Povray: '+str(run_povray(1)) + '\n'
+#write_report_file(povray_score, file_name)
+
+bw_mem_score = run_bw_mem(30)
+print bw_mem_score
+
+#run_grep(1000)
