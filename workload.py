@@ -90,7 +90,15 @@ def run_crypt(times):
   time_score = average_time_elapsed(command, times, directory)
   return time_score
 
+def run_cat(times):
+  print '>>> Run cat test .. '
+  command = "(time sh -c \"cat file.txt > filecat.txt\") 2>> /mnt/report_file"
+  directory = '/root/huge-file'
+  time_score = average_time_elapsed(command, times, directory)
+  return time_score
+  
 def run_bw_mem(times):
+  print '>>> Run bw_mem test ... '
   report_file = '/mnt/report_file'
   command = 'bw_mem 790M rdwr 2>> /mnt/report_file'
  
@@ -130,7 +138,7 @@ st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 #povray_score = 'Povray: '+str(run_povray(1)) + '\n'
 #write_report_file(povray_score, file_name)
 
-bw_mem_score = run_bw_mem(30)
-print bw_mem_score
+cat_score = run_cat(2)
+print cat_score
 
 #run_grep(1000)
