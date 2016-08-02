@@ -144,7 +144,7 @@ def run_bw_mem(times):
 def run_iozone(times):
   print '>>> Run iozone ...'
   report_file = '/mnt/report_file'
-  command = './iozone -a -i 0 -i 1 -i 2 -s 2000000 -r 4086 2 >> /mnt/report_file'
+  command = './iozone -a -i 0 -i 1 -i 2 -s 2000000 -r 4096 2 >> /mnt/report_file'
   os.chdir('/root/iozone3_434/src/current')
   
   if os.path.isfile(report_file):
@@ -210,30 +210,52 @@ def run_cachebench(times):
 #get actual time
 st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 
-#file_name = 'inactive_score_'+str(st)
-#crypt_score = 'Ccrypt: ' + str(run_crypt(2)) + '\n'
-#write_report_file(crypt_score,file_name)
+file_name = 'inactive_score_full_'+str(st)
 
-#cp_score = 'Cp: '+str(run_cp(2)) + '\n'
-#write_report_file(cp_score,file_name)
+add_double_score = 'Add_double: '+  str(run_add_double(30)) + '\n'
+write_report_file(add_double_score,file_name)
 
-#grep_score = 'Grep: '+str(run_grep(2)) + '\n'
-#write_report_file(grep_score,file_name)
+bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(30)) + '\n'
+write_report_file(bw_mem_score,file_name)
 
-#bzip2_score = 'Bzip: '+str(run_bzip2(2)) + '\n'
-#write_report_file(bzip2_score, file_name)
+bzip2_score = 'Bzip: '+str(run_bzip2(2)) + '\n'
+write_report_file(bzip2_score, file_name)
 
-#povray_score = 'Povray: '+str(run_povray(1)) + '\n'
-#write_report_file(povray_score, file_name)
+cat_score = 'Cat: '+str(run_cat(30)) + '\n'
+write_report_file(cat_score, file_name)
 
-#iozone_score = run_iozone(2)
-#print 'Iozone write sequential: '+str(iozone_score[0])
-#print 'Iozone read sequential: '+ str(iozone_score[1])
-#print 'Iozone write_random: '+ str(iozone_score[2])
-#print 'IOzone read_random: '+ str(iozone_score[3]) 
+cachebench_score = 'Cachebench: '+str(run_cachebench(30)) + '\n' #
+write_report_file(cachebench_score, file_name)
 
-#make_score = run_make(2)
-add_double_score = run_add_double(3)
-print add_double_score
-#print make_score  
-#run_grep(1000)
+crypt_score = 'Ccrypt: ' + str(run_crypt(30)) + '\n'
+write_report_file(crypt_score,file_name)
+
+cp_score = 'Cp: '+str(run_cp(30)) + '\n'
+write_report_file(cp_score,file_name)
+
+dd_score = 'dd: '+str(run_dd(30)) + '\n'
+write_report_file(dd_score, file_name)
+
+grep_score = 'Grep: '+str(run_grep(30)) + '\n'
+write_report_file(grep_score,file_name)
+
+gzip_score = 'Gzip: '+str(run_gzip(30)) + '\n'
+write_report_file(gzip_score, file_name)
+
+iozone_score = run_iozone(30)
+iozone_write = 'Iozone write sequential: '+str(iozone_score[0]) + '\n'
+iozone_read = 'Iozone read sequential: '+ str(iozone_score[1]) + '\n'
+iozone_wr_random = 'Iozone write_random: '+ str(iozone_score[2]) + '\n'
+iozone_rd_random = 'Iozone read_random: '+ str(iozone_score[3]) + '\n'
+write_report_file(iozone_write, file_name)
+write_report_file(iozone_read, file_name)
+write_report_file(iozone_wr_random, file_name)
+write_report_file(iozone_rd_random, file_name)
+
+make_score = 'Make: '+str(run_make(30)) + '\n'
+write_report_file(make_score, file_name)
+
+povray_score = 'Povray: '+str(run_povray(15)) + '\n'
+write_report_file(povray_score, file_name)
+
+
