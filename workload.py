@@ -114,10 +114,32 @@ def run_bw_mem(times):
   score_file = open(report_file, 'r')
   for line in score_file:
     value = re.findall(r'[-+]?([0-9]*\.[0-9]+|[0-9]+)',line)
-    print value
     sum_average += float(value[1])
   return float(sum_average/float(times))
-    
+
+def run_cachebench(times):
+  print '>>> Run cachebench ... '
+  report_file = '/mnt/report_file'
+  command = './cachebench -b -x0 -m24 -d1 -e1 2 >> /mnt/report_file'
+  os.chdir('/root/llcbench/cachebench')
+
+  if os.path.isfile(report_file):
+    os.remove(report_file)
+
+  cont = 1
+  while cont <= times:
+    os.system(command)
+    cont+=1
+
+  major_allocation_memmory = '16777216'
+  sum_average = 0
+  score_file = open(report_file, 'r')
+  for line in score_file:
+    if major_allocation_memmory in line:
+      value = re.findall(r'[-+]?([0-9]*\.[0-9]+|[0-9]+)',line)
+      sum_average += float(value[1])
+
+  return float(sum_average/float(times))       
 
 #get actual time
 st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
@@ -138,7 +160,7 @@ st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 #povray_score = 'Povray: '+str(run_povray(1)) + '\n'
 #write_report_file(povray_score, file_name)
 
-cat_score = run_cat(2)
-print cat_score
+cachebench_score = run_cachebench(2)
+print cachebench_score
 
 #run_grep(1000)
