@@ -131,6 +131,47 @@ def run_bw_mem(times):
     sum_average += float(value[1])
   return float(sum_average/float(times))
 
+def run_iozone(times):
+  print '>>> Run iozone ...'
+  report_file = '/mnt/report_file'
+  command = './iozone -a -i 0 -i 1 -i 2 -s 2000000 -r 4086 2 >> /mnt/report_file'
+  os.chdir('/root/iozone3_434/src/current')
+  
+  if os.path.isfile(report_file):
+    os.remove(report_file)
+
+  cont = 1
+  while cont <= times:
+    os.system(command)
+    cont+=1
+  
+  sum_write = 0
+  sum_read = 0
+  sum_write_random = 0
+  sum_read_random = 0
+  
+  #average[0] -> write , average[1] -> read, average[2] -> write random, average[3] read random
+  average = [0, 0, 0, 0]
+  cont_times = 1 
+  score_file = open(report_file)
+  lines = score_file.readlines()
+  while cont_times <= times:
+    #get only statistic line
+    statistic_line = 28*cont_times+(cont_times-1)*3 
+    value = re.findall(r'[-+]?([0-9]*\.[0-9]+|[0-9]+)',lines[statistic_line])
+    print value
+    sum_write += float(value[2])
+    sum_read += float(value[4])
+    sum_read_random += float(value[6])
+    sum_write_random += float(value[7]) 
+    cont_times+=1
+
+  average[0] = float(sum_write/float(times))
+  average[1] = float(sum_read/float(times))
+  average[2] = float(sum_write_random/float(times))
+  average[3] = float(sum_read_random/float(times))
+  return average
+  
 def run_cachebench(times):
   print '>>> Run cachebench ... '
   report_file = '/mnt/report_file'
@@ -175,7 +216,10 @@ st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 #povray_score = 'Povray: '+str(run_povray(1)) + '\n'
 #write_report_file(povray_score, file_name)
 
-gzip_score = run_gzip(2)
-print gzip_score
+iozone_score = run_iozone(2)
+print 'Iozone write sequential: '+str(iozone_score[0])
+print 'Iozone read sequential: '+ str(iozone_score[1])
+print 'Iozone write_random: '+ str(iozone_score[2])
+print 'IOzone read_random: '+ str(iozone_score[3]) 
 
 #run_grep(1000)
