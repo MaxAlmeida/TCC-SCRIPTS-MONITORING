@@ -41,8 +41,8 @@ def run_add_double(times):
   
   cont = 1
   while cont <= times:
-    #run add_double by 30 sec
-    os.system("./singleuser <<<$'foreground\n\n3\n/mnt\n'")
+    #run add_double by 10 sec
+    os.system("./singleuser <<<$'foreground\n\n10\n/mnt\n'")
     cont+=1
 
   #calculate average
@@ -52,7 +52,7 @@ def run_add_double(times):
     if "add_double" in line:
       value = re.findall(r'[-+]?([0-9]*\.[0-9]+|[0-9]+)',line)
       sum_average += int(value[0])
-  print float(sum_average)/float(times) 
+  return float(sum_average)/float(times) 
  
 def run_bzip2(times):
   print '>>>>Run bzip2 test...'
@@ -226,13 +226,14 @@ st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 #povray_score = 'Povray: '+str(run_povray(1)) + '\n'
 #write_report_file(povray_score, file_name)
 
-iozone_score = run_iozone(2)
-print 'Iozone write sequential: '+str(iozone_score[0])
-print 'Iozone read sequential: '+ str(iozone_score[1])
-print 'Iozone write_random: '+ str(iozone_score[2])
-print 'IOzone read_random: '+ str(iozone_score[3]) 
+#iozone_score = run_iozone(2)
+#print 'Iozone write sequential: '+str(iozone_score[0])
+#print 'Iozone read sequential: '+ str(iozone_score[1])
+#print 'Iozone write_random: '+ str(iozone_score[2])
+#print 'IOzone read_random: '+ str(iozone_score[3]) 
 
 #make_score = run_make(2)
-
+add_double_score = run_add_double(3)
+print add_double_score
 #print make_score  
 #run_grep(1000)
