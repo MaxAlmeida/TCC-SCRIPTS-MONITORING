@@ -124,7 +124,7 @@ def run_make(times):
 def run_bw_mem(times):
   print '>>> Run bw_mem test ... '
   report_file = '/mnt/report_file'
-  command = 'bw_mem 790M rdwr 2>> /mnt/report_file'
+  command = 'bw_mem 750M rdwr 2>> /mnt/report_file'
  
   if os.path.isfile(report_file):
     os.remove(report_file)
@@ -218,7 +218,7 @@ write_report_file(add_double_score,file_name)
 bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(30)) + '\n'
 write_report_file(bw_mem_score,file_name)
 
-bzip2_score = 'Bzip: '+str(run_bzip2(2)) + '\n'
+bzip2_score = 'Bzip: '+str(run_bzip2(1)) + '\n'
 write_report_file(bzip2_score, file_name)
 
 cat_score = 'Cat: '+str(run_cat(30)) + '\n'
