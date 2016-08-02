@@ -78,7 +78,7 @@ def run_povray(times):
 
 def run_cp(times):
   print '>>> Run cp test ...'
-  command = "(time sh -c \"cp file.txt file_cp_copy.txt\") 2>> /mnt/report_file"
+  command = "(time sh -c \"cp file.txt file_copy.txt\") 2>> /mnt/report_file"
   directory = '/root/huge-file'
   time_score = average_time_elapsed(command, times, directory)
   return time_score
@@ -92,11 +92,17 @@ def run_crypt(times):
 
 def run_cat(times):
   print '>>> Run cat test .. '
-  command = "(time sh -c \"cat file.txt > filecat.txt\") 2>> /mnt/report_file"
+  command = "(time sh -c \"cat file.txt > file_copy.txt\") 2>> /mnt/report_file"
   directory = '/root/huge-file'
   time_score = average_time_elapsed(command, times, directory)
   return time_score
-  
+
+def run_dd(times):
+  print '>>> Run dd test ... '
+  command = "(time sh -c \"dd if=/dev/zero of=file_copy.txt bs=8k count=500k\") 2>> /mnt/report_file"
+  directory = '/root/huge-file'
+  time_score = average_time_elapsed(command, times, directory)
+  return time_score
 def run_bw_mem(times):
   print '>>> Run bw_mem test ... '
   report_file = '/mnt/report_file'
@@ -141,6 +147,7 @@ def run_cachebench(times):
 
   return float(sum_average/float(times))       
 
+
 #get actual time
 st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 
@@ -160,7 +167,7 @@ st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 #povray_score = 'Povray: '+str(run_povray(1)) + '\n'
 #write_report_file(povray_score, file_name)
 
-cachebench_score = run_cachebench(2)
-print cachebench_score
+dd_score = run_dd(2)
+print dd_score
 
 #run_grep(1000)
