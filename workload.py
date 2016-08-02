@@ -3,14 +3,19 @@ import re
 import os
 import time
 import datetime
+import statistics
 
 def write_report_file(average, file_name): 
   directory = '/mnt/reports/'
   report = open(directory+file_name, 'a')
   report.write(average)
   report.close()
- 
-def average_time_elapsed(command, times, directory):
+
+def standard_deviation(values, average, times):
+  
+  return float(deviation_sum/float(times)) 
+
+def average_time_elapsed(command, times, directory,application):
   report_file = '/mnt/report_file'
   os.chdir(directory)
  
@@ -23,12 +28,18 @@ def average_time_elapsed(command, times, directory):
     cont+=1
  
   #calculate average
+  values_deviation = []
   sum_average = 0
   score_file = open(report_file, 'r')
   for line in score_file:
     if "real" in line:
       value = re.findall(r'[-+]?([0-9]*\.[0-9]+|[0-9]+)',line)
-      sum_average += float(value[0])*60+float(value[1])
+      sum_average += float(value[0])*60+float(value[1])  
+      values_deviation.append(float(value[1]))
+  print values_deviation
+  mean_values = statistics.mean(values_deviation)
+  deviation = statistics.stdev(values_deviation,mean_values)  
+  write_report_file(application+ ' '+str(times)+' times: '+str(deviation) + '\n',application+'_standard_deviation') 
   return float(sum_average/float(times))
 
 
@@ -42,7 +53,7 @@ def run_add_double(times):
   cont = 1
   while cont <= times:
     #run add_double by 10 sec
-    os.system("./singleuser <<<$'foreground\n\n10\n/mnt\n'")
+    os.system("./singleuser <<<$'foreground\n\n30\n/mnt\n'")
     cont+=1
 
   #calculate average
@@ -108,7 +119,7 @@ def run_gzip(times):
   print '>>> Run gzip test ... '
   command = "(time sh -c \"gzip -c --best file.txt > file.txt.bz\") 2>> /mnt/report_file"
   directory = '/root/huge-file'
-  time_score = average_time_elapsed(command, times, directory)
+  time_score = average_time_elapsed(command, times, directory,'Gzip')
   return time_score
 
 def run_make(times):
@@ -118,7 +129,7 @@ def run_make(times):
 
   command = "(time sh -c \"make; make clean\") 2>> /mnt/report_file"
   directory = '/root/httpd-2.2.31'
-  time_score = average_time_elapsed(command, times, directory)
+  time_score = average_time_elapsed(command, times, directory,'Make')
   return time_score
  
 def run_bw_mem(times):
@@ -136,9 +147,16 @@ def run_bw_mem(times):
 
   sum_average = 0
   score_file = open(report_file, 'r')
+  values_deviation = []
   for line in score_file:
     value = re.findall(r'[-+]?([0-9]*\.[0-9]+|[0-9]+)',line)
     sum_average += float(value[1])
+    values_deviation.append(float(value[1]))
+  print values_deviation
+  mean_values = statistics.mean(values_deviation)
+  deviation = statistics.stdev(values_deviation,mean_values)  
+  write_report_file('Bw_mem '+str(times)+' times: '+str(deviation) + '\n','bw_standard_deviation') 
+   
   return float(sum_average/float(times))
 
 def run_iozone(times):
@@ -210,52 +228,52 @@ def run_cachebench(times):
 #get actual time
 st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 
-file_name = 'inactive_score_full_'+str(st)
-
-add_double_score = 'Add_double: '+  str(run_add_double(30)) + '\n'
-write_report_file(add_double_score,file_name)
-
-bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(30)) + '\n'
-write_report_file(bw_mem_score,file_name)
-
-bzip2_score = 'Bzip: '+str(run_bzip2(1)) + '\n'
-write_report_file(bzip2_score, file_name)
-
-cat_score = 'Cat: '+str(run_cat(30)) + '\n'
-write_report_file(cat_score, file_name)
-
-cachebench_score = 'Cachebench: '+str(run_cachebench(30)) + '\n' #
-write_report_file(cachebench_score, file_name)
-
-crypt_score = 'Ccrypt: ' + str(run_crypt(30)) + '\n'
-write_report_file(crypt_score,file_name)
-
-cp_score = 'Cp: '+str(run_cp(30)) + '\n'
-write_report_file(cp_score,file_name)
-
-dd_score = 'dd: '+str(run_dd(30)) + '\n'
-write_report_file(dd_score, file_name)
-
-grep_score = 'Grep: '+str(run_grep(30)) + '\n'
-write_report_file(grep_score,file_name)
-
-gzip_score = 'Gzip: '+str(run_gzip(30)) + '\n'
-write_report_file(gzip_score, file_name)
-
-iozone_score = run_iozone(30)
-iozone_write = 'Iozone write sequential: '+str(iozone_score[0]) + '\n'
-iozone_read = 'Iozone read sequential: '+ str(iozone_score[1]) + '\n'
-iozone_wr_random = 'Iozone write_random: '+ str(iozone_score[2]) + '\n'
-iozone_rd_random = 'Iozone read_random: '+ str(iozone_score[3]) + '\n'
-write_report_file(iozone_write, file_name)
-write_report_file(iozone_read, file_name)
-write_report_file(iozone_wr_random, file_name)
-write_report_file(iozone_rd_random, file_name)
-
-make_score = 'Make: '+str(run_make(30)) + '\n'
-write_report_file(make_score, file_name)
-
-povray_score = 'Povray: '+str(run_povray(15)) + '\n'
-write_report_file(povray_score, file_name)
-
-
+#file_name = 'F@add_double_score_full_'+str(st)
+#
+#add_double_score = 'Add_double: '+  str(run_add_double(10)) + '\n'
+#write_report_file(add_double_score,file_name)
+#
+#bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(10)) + '\n'
+#write_report_file(bw_mem_score,file_name)
+#
+#bzip2_score = 'Bzip: '+str(run_bzip2(10)) + '\n'
+#write_report_file(bzip2_score, file_name)
+#
+#cat_score = 'Cat: '+str(run_cat(10)) + '\n'
+#write_report_file(cat_score, file_name)
+#
+#cachebench_score = 'Cachebench: '+str(run_cachebench(10)) + '\n' #
+#write_report_file(cachebench_score, file_name)
+#
+#crypt_score = 'Ccrypt: ' + str(run_crypt(10)) + '\n'
+#write_report_file(crypt_score,file_name)
+#
+#cp_score = 'Cp: '+str(run_cp(10)) + '\n'
+#write_report_file(cp_score,file_name)
+#
+#dd_score = 'dd: '+str(run_dd(10)) + '\n'
+#write_report_file(dd_score, file_name)
+#
+#grep_score = 'Grep: '+str(run_grep(10)) + '\n'
+#write_report_file(grep_score,file_name)
+#
+#gzip_score = 'Gzip: '+str(run_gzip(10)) + '\n'
+#write_report_file(gzip_score, file_name)
+#
+#iozone_score = run_iozone(10)
+#iozone_write = 'Iozone write sequential: '+str(iozone_score[0]) + '\n'
+#iozone_read = 'Iozone read sequential: '+ str(iozone_score[1]) + '\n'
+#iozone_wr_random = 'Iozone write_random: '+ str(iozone_score[2]) + '\n'
+#iozone_rd_random = 'Iozone read_random: '+ str(iozone_score[3]) + '\n'
+#write_report_file(iozone_write, file_name)
+#write_report_file(iozone_read, file_name)
+#write_report_file(iozone_wr_random, file_name)
+#write_report_file(iozone_rd_random, file_name)
+#
+#make_score = 'Make: '+str(run_make(10)) + '\n'
+#write_report_file(make_score, file_name)
+#
+#povray_score = 'Povray: '+str(run_povray(10)) + '\n'
+#write_report_file(povray_score, file_name)
+#
+#
