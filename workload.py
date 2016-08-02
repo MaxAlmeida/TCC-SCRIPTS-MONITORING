@@ -111,6 +111,16 @@ def run_gzip(times):
   time_score = average_time_elapsed(command, times, directory)
   return time_score
 
+def run_make(times):
+  print '>>> RUn apache test ...'
+  os.chdir('/root/httpd-2.2.31')
+  os.system('make clean')
+
+  command = "(time sh -c \"make; make clean\") 2>> /mnt/report_file"
+  directory = '/root/httpd-2.2.31'
+  time_score = average_time_elapsed(command, times, directory)
+  return time_score
+ 
 def run_bw_mem(times):
   print '>>> Run bw_mem test ... '
   report_file = '/mnt/report_file'
@@ -222,4 +232,7 @@ print 'Iozone read sequential: '+ str(iozone_score[1])
 print 'Iozone write_random: '+ str(iozone_score[2])
 print 'IOzone read_random: '+ str(iozone_score[3]) 
 
+#make_score = run_make(2)
+
+#print make_score  
 #run_grep(1000)
