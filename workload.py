@@ -103,6 +103,14 @@ def run_dd(times):
   directory = '/root/huge-file'
   time_score = average_time_elapsed(command, times, directory)
   return time_score
+
+def run_gzip(times):
+  print '>>> Run gzip test ... '
+  command = "(time sh -c \"gzip -c --best file.txt > file.txt.bz\") 2>> /mnt/report_file"
+  directory = '/root/huge-file'
+  time_score = average_time_elapsed(command, times, directory)
+  return time_score
+
 def run_bw_mem(times):
   print '>>> Run bw_mem test ... '
   report_file = '/mnt/report_file'
@@ -167,7 +175,7 @@ st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 #povray_score = 'Povray: '+str(run_povray(1)) + '\n'
 #write_report_file(povray_score, file_name)
 
-dd_score = run_dd(2)
-print dd_score
+gzip_score = run_gzip(2)
+print gzip_score
 
 #run_grep(1000)
