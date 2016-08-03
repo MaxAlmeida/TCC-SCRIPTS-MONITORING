@@ -42,7 +42,7 @@ def run_add_double(times):
   cont = 1
   while cont <= times:
     #run add_double by 10 sec
-    os.system("./singleuser <<<$'foreground\n\n10\n/mnt\n'")
+    os.system("./singleuser <<<$'foreground\n\n30\n/mnt\n'")
     cont+=1
 
   #calculate average
