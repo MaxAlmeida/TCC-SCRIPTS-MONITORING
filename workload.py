@@ -124,7 +124,7 @@ def run_make(times):
 def run_bw_mem(times):
   print '>>> Run bw_mem test ... '
   report_file = '/mnt/report_file'
-  command = 'bw_mem 750M rdwr 2>> /mnt/report_file'
+  command = 'bw_mem 400M fcp  2>> /mnt/report_file'
  
   if os.path.isfile(report_file):
     os.remove(report_file)
