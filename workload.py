@@ -124,7 +124,7 @@ def run_make(times):
 def run_bw_mem(times):
   print '>>> Run bw_mem test ... '
   report_file = '/mnt/report_file'
-  command = 'bw_mem 400M fcp  2>> /mnt/report_file'
+  command = 'bw_mem 800M rd  2>> /mnt/report_file'
  
   if os.path.isfile(report_file):
     os.remove(report_file)
@@ -212,11 +212,11 @@ st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 
 file_name = 'F@Add_double_score_full_'+str(st)
 
-#add_double_score = 'Add_double: '+  str(run_add_double(30)) + '\n'
-#write_report_file(add_double_score,file_name)
+add_double_score = 'Add_double: '+  str(run_add_double(15)) + '\n'
+write_report_file(add_double_score,file_name)
 
-#bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(30)) + '\n'
-#write_report_file(bw_mem_score,file_name)
+bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(15)) + '\n'
+write_report_file(bw_mem_score,file_name)
 
 bzip2_score = 'Bzip: '+str(run_bzip2(15)) + '\n'
 write_report_file(bzip2_score, file_name)
