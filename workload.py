@@ -210,39 +210,39 @@ def run_cachebench(times):
 #get actual time
 st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 
-file_name = 'inactive_score_full_'+str(st)
+file_name = 'F@Add_double_score_full_'+str(st)
 
-add_double_score = 'Add_double: '+  str(run_add_double(30)) + '\n'
-write_report_file(add_double_score,file_name)
+#add_double_score = 'Add_double: '+  str(run_add_double(30)) + '\n'
+#write_report_file(add_double_score,file_name)
 
-bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(30)) + '\n'
-write_report_file(bw_mem_score,file_name)
+#bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(30)) + '\n'
+#write_report_file(bw_mem_score,file_name)
 
-bzip2_score = 'Bzip: '+str(run_bzip2(1)) + '\n'
+bzip2_score = 'Bzip: '+str(run_bzip2(15)) + '\n'
 write_report_file(bzip2_score, file_name)
 
-cat_score = 'Cat: '+str(run_cat(30)) + '\n'
+cat_score = 'Cat: '+str(run_cat(15)) + '\n'
 write_report_file(cat_score, file_name)
 
-cachebench_score = 'Cachebench: '+str(run_cachebench(30)) + '\n' #
+cachebench_score = 'Cachebench: '+str(run_cachebench(15)) + '\n' #
 write_report_file(cachebench_score, file_name)
 
-crypt_score = 'Ccrypt: ' + str(run_crypt(30)) + '\n'
+crypt_score = 'Ccrypt: ' + str(run_crypt(15)) + '\n'
 write_report_file(crypt_score,file_name)
 
-cp_score = 'Cp: '+str(run_cp(30)) + '\n'
+cp_score = 'Cp: '+str(run_cp(15)) + '\n'
 write_report_file(cp_score,file_name)
 
-dd_score = 'dd: '+str(run_dd(30)) + '\n'
+dd_score = 'dd: '+str(run_dd(15)) + '\n'
 write_report_file(dd_score, file_name)
 
-grep_score = 'Grep: '+str(run_grep(30)) + '\n'
+grep_score = 'Grep: '+str(run_grep(15)) + '\n'
 write_report_file(grep_score,file_name)
 
-gzip_score = 'Gzip: '+str(run_gzip(30)) + '\n'
+gzip_score = 'Gzip: '+str(run_gzip(15)) + '\n'
 write_report_file(gzip_score, file_name)
 
-iozone_score = run_iozone(30)
+iozone_score = run_iozone(15)
 iozone_write = 'Iozone write sequential: '+str(iozone_score[0]) + '\n'
 iozone_read = 'Iozone read sequential: '+ str(iozone_score[1]) + '\n'
 iozone_wr_random = 'Iozone write_random: '+ str(iozone_score[2]) + '\n'
@@ -252,7 +252,7 @@ write_report_file(iozone_read, file_name)
 write_report_file(iozone_wr_random, file_name)
 write_report_file(iozone_rd_random, file_name)
 
-make_score = 'Make: '+str(run_make(30)) + '\n'
+make_score = 'Make: '+str(run_make(15)) + '\n'
 write_report_file(make_score, file_name)
 
 povray_score = 'Povray: '+str(run_povray(15)) + '\n'
