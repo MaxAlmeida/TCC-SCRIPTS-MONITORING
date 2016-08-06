@@ -3,6 +3,28 @@ import re
 import os
 import time
 import datetime
+import smtplib
+from email.MIMEMultipart import MIMEMultipart
+from email.MIMEText import MIMEText
+
+def send_email(message,password):
+ fromaddr = "darkamui100@gmail.com"
+ toaddr = "llewxam150@gmail.com"
+ msg = MIMEMultipart()
+ msg['From'] = fromaddr
+ msg['To'] = toaddr
+ msg['Subject'] = "TCC-SCRIPTS-MONITORING"
+  
+ body = message
+ msg.attach(MIMEText(body, 'plain'))
+ 
+ server = smtplib.SMTP('smtp.gmail.com', 587)
+ server.starttls()
+ server.login(fromaddr, password)
+ text = msg.as_string()
+ server.sendmail(fromaddr, toaddr, text)
+ server.quit()
+ 
 
 def write_report_file(average, file_name): 
   directory = '/mnt/reports/'
@@ -210,15 +232,15 @@ def run_cachebench(times):
 #get actual time
 st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 
-file_name = 'F@Add_double_score_full_'+str(st)
+file_name = 'F@email_score_full_'+str(st)
 
 add_double_score = 'Add_double: '+  str(run_add_double(15)) + '\n'
 write_report_file(add_double_score,file_name)
 
-bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(15)) + '\n'
-write_report_file(bw_mem_score,file_name)
+#bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(15)) + '\n'
+#write_report_file(bw_mem_score,file_name)
 
-bzip2_score = 'Bzip: '+str(run_bzip2(15)) + '\n'
+bzip2_score = 'Bzip: '+str(run_bzip2(1)) + '\n'
 write_report_file(bzip2_score, file_name)
 
 cat_score = 'Cat: '+str(run_cat(15)) + '\n'
@@ -258,4 +280,5 @@ write_report_file(make_score, file_name)
 povray_score = 'Povray: '+str(run_povray(15)) + '\n'
 write_report_file(povray_score, file_name)
 
-
+print "send email"
+send_email(file_name + ' Done!','')
