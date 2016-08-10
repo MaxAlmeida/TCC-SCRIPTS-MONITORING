@@ -3,7 +3,11 @@ import re
 import os
 import time
 import datetime
+import thread
 import smtplib
+import multiprocessing
+from Queue import Queue
+import src as metric
 from email.MIMEMultipart import MIMEMultipart
 from email.MIMEText import MIMEText
 
@@ -32,7 +36,8 @@ def write_report_file(average, file_name):
   report.write(average)
   report.close()
  
-def average_time_elapsed(command, times, directory):
+def average_time_elapsed(command, times, directory, application):
+  queue = Queue(maxsize=0)
   report_file = '/mnt/report_file'
   os.chdir(directory)
  
@@ -40,10 +45,14 @@ def average_time_elapsed(command, times, directory):
     os.remove(report_file)
  
   cont = 1
+  metri = multiprocessing.Process(target=metric.run_metric, args=(120,application))
+  metri.start()
   while cont <= times:
     os.system(command)
     cont+=1
- 
+    if(metri.exitcode == 0):
+      print "entrei no if"
+      break
   #calculate average
   sum_average = 0
   score_file = open(report_file, 'r')
@@ -79,8 +88,8 @@ def run_add_double(times):
 def run_bzip2(times):
   print '>>>>Run bzip2 test...'
   command = "(time sh -c 'bzip2 -c --best file.txt > file.txt.bz') 2>> /mnt/report_file"
-  directory = '/root/huge-file'
-  time_score = average_time_elapsed(command,times,directory)
+  directory = '/root/huge-file' 
+  time_score = average_time_elapsed(command,times,directory,"Bzip2")
   return time_score 
   
 
@@ -88,49 +97,49 @@ def run_grep(times):
   print '>>> Run Grep test ...'
   command = "(time sh -c  \"grep -aoE '[123]+' random | tr -d '\n'\") 2>> /mnt/report_file" 
   directory = '/root/huge-file'
-  time_score = average_time_elapsed(command,times,directory)
+  time_score = average_time_elapsed(command,times,directory,"Grep")
   return time_score
 
 def run_povray(times):
   print '>>> Run povray test ...'
   command = "(time sh -c \"povray benchmark.pov\") 2>> /mnt/report_file"
   directory = '/root/povray/povray-3.6/scenes/advanced'
-  time_score = average_time_elapsed(command,times,directory)
+  time_score = average_time_elapsed(command,times,directory,"Povray")
   return time_score
 
 def run_cp(times):
   print '>>> Run cp test ...'
   command = "(time sh -c \"cp file.txt file_copy.txt\") 2>> /mnt/report_file"
   directory = '/root/huge-file'
-  time_score = average_time_elapsed(command, times, directory)
+  time_score = average_time_elapsed(command, times, directory,"Cp")
   return time_score
 
 def run_crypt(times):
   print '>>> Run crypt test ...'
   command = "(time sh -c \"./encrpyt.sh\";\"./decrypt.sh\") 2>> /mnt/report_file"
   directory = '/mnt/TCC-SCRIPTS-MONITORING'
-  time_score = average_time_elapsed(command, times, directory)
+  time_score = average_time_elapsed(command, times, directory,"Crypt")
   return time_score
 
 def run_cat(times):
   print '>>> Run cat test .. '
   command = "(time sh -c \"cat file.txt > file_copy.txt\") 2>> /mnt/report_file"
   directory = '/root/huge-file'
-  time_score = average_time_elapsed(command, times, directory)
+  time_score = average_time_elapsed(command, times, directory,"Cat")
   return time_score
 
 def run_dd(times):
   print '>>> Run dd test ... '
   command = "(time sh -c \"dd if=/dev/zero of=file_copy.txt bs=8k count=500k\") 2>> /mnt/report_file"
   directory = '/root/huge-file'
-  time_score = average_time_elapsed(command, times, directory)
+  time_score = average_time_elapsed(command, times, directory,"Dd")
   return time_score
 
 def run_gzip(times):
   print '>>> Run gzip test ... '
   command = "(time sh -c \"gzip -c --best file.txt > file.txt.bz\") 2>> /mnt/report_file"
   directory = '/root/huge-file'
-  time_score = average_time_elapsed(command, times, directory)
+  time_score = average_time_elapsed(command, times, directory,"Gzip")
   return time_score
 
 def run_make(times):
@@ -140,7 +149,7 @@ def run_make(times):
 
   command = "(time sh -c \"make; make clean\") 2>> /mnt/report_file"
   directory = '/root/httpd-2.2.31'
-  time_score = average_time_elapsed(command, times, directory)
+  time_score = average_time_elapsed(command, times, directory,"Make")
   return time_score
  
 def run_bw_mem(times):
@@ -232,53 +241,54 @@ def run_cachebench(times):
 #get actual time
 st  = datetime.datetime.fromtimestamp(time.time()).strftime('%Y%m%d-%H%M')
 
-file_name = 'F@email_score_full_'+str(st)
-
-add_double_score = 'Add_double: '+  str(run_add_double(15)) + '\n'
-write_report_file(add_double_score,file_name)
-
+file_name = 'inactive_full_'+str(st)
+#
+#add_double_score = 'Add_double: '+  str(run_add_double(15)) + '\n'
+#write_report_file(add_double_score,file_name)
+#
 #bw_mem_score = 'Bw_mem: :'+  str(run_bw_mem(15)) + '\n'
 #write_report_file(bw_mem_score,file_name)
-
-bzip2_score = 'Bzip: '+str(run_bzip2(1)) + '\n'
-write_report_file(bzip2_score, file_name)
-
-cat_score = 'Cat: '+str(run_cat(15)) + '\n'
-write_report_file(cat_score, file_name)
-
-cachebench_score = 'Cachebench: '+str(run_cachebench(15)) + '\n' #
-write_report_file(cachebench_score, file_name)
-
-crypt_score = 'Ccrypt: ' + str(run_crypt(15)) + '\n'
-write_report_file(crypt_score,file_name)
-
-cp_score = 'Cp: '+str(run_cp(15)) + '\n'
-write_report_file(cp_score,file_name)
-
-dd_score = 'dd: '+str(run_dd(15)) + '\n'
-write_report_file(dd_score, file_name)
-
-grep_score = 'Grep: '+str(run_grep(15)) + '\n'
-write_report_file(grep_score,file_name)
-
-gzip_score = 'Gzip: '+str(run_gzip(15)) + '\n'
-write_report_file(gzip_score, file_name)
-
-iozone_score = run_iozone(15)
-iozone_write = 'Iozone write sequential: '+str(iozone_score[0]) + '\n'
-iozone_read = 'Iozone read sequential: '+ str(iozone_score[1]) + '\n'
-iozone_wr_random = 'Iozone write_random: '+ str(iozone_score[2]) + '\n'
-iozone_rd_random = 'Iozone read_random: '+ str(iozone_score[3]) + '\n'
-write_report_file(iozone_write, file_name)
-write_report_file(iozone_read, file_name)
-write_report_file(iozone_wr_random, file_name)
-write_report_file(iozone_rd_random, file_name)
-
-make_score = 'Make: '+str(run_make(15)) + '\n'
-write_report_file(make_score, file_name)
-
-povray_score = 'Povray: '+str(run_povray(15)) + '\n'
-write_report_file(povray_score, file_name)
-
-print "send email"
-send_email(file_name + ' Done!','')
+#
+#bzip2_score = 'Bzip: '+str(run_bzip2(15)) + '\n'
+#write_report_file(bzip2_score, file_name)
+#
+#cat_score = 'Cat: '+str(run_cat(15)) + '\n'
+#write_report_file(cat_score, file_name)
+#
+#cachebench_score = 'Cachebench: '+str(run_cachebench(15)) + '\n' #
+#write_report_file(cachebench_score, file_name)
+#
+#crypt_score = 'Ccrypt: ' + str(run_crypt(15)) + '\n'
+#write_report_file(crypt_score,file_name)
+#
+#cp_score = 'Cp: '+str(run_cp(15)) + '\n'
+#write_report_file(cp_score,file_name)
+#
+#dd_score = 'dd: '+str(run_dd(100)) + '\n'
+#print dd_score
+#write_report_file(dd_score, file_name)
+#
+#grep_score = 'Grep: '+str(run_grep(15)) + '\n'
+#write_report_file(grep_score,file_name)
+#
+#gzip_score = 'Gzip: '+str(run_gzip(15)) + '\n'
+#write_report_file(gzip_score, file_name)
+#
+#iozone_score = run_iozone(15)
+#iozone_write = 'Iozone write sequential: '+str(iozone_score[0]) + '\n'
+#iozone_read = 'Iozone read sequential: '+ str(iozone_score[1]) + '\n'
+#iozone_wr_random = 'Iozone write_random: '+ str(iozone_score[2]) + '\n'
+#iozone_rd_random = 'Iozone read_random: '+ str(iozone_score[3]) + '\n'
+#write_report_file(iozone_write, file_name)
+#write_report_file(iozone_read, file_name)
+#write_report_file(iozone_wr_random, file_name)
+#write_report_file(iozone_rd_random, file_name)
+#
+#make_score = 'Make: '+str(run_make(15)) + '\n'
+#write_report_file(make_score, file_name)
+#
+#povray_score = 'Povray: '+str(run_povray(15)) + '\n'
+#write_report_file(povray_score, file_name)
+#
+#print "send email"
+#send_email(file_name + ' Done!','tccscripts')
